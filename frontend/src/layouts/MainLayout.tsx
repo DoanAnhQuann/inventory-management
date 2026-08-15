@@ -22,7 +22,7 @@ import { useUIStore } from '@/store/useUIStore'
 const NAV_ITEMS: { to: string; label: string; icon: ComponentType<{ size?: number }> }[] = [
   { to: ROUTES.HOME, label: 'Tổng quan', icon: LayoutDashboard },
   { to: ROUTES.GOODS_RECEIPT, label: 'Phiếu nhập kho', icon: ClipboardList },
-  { to: ROUTES.INVENTORY_REPORT, label: 'Báo cáo tồn kho', icon: BarChart3 },
+  { to: ROUTES.INVENTORY_REPORT, label: 'Lịch sử biến động tồn kho', icon: BarChart3 },
   { to: ROUTES.PRODUCTS, label: 'Sản phẩm', icon: Package },
   { to: ROUTES.SUPPLIERS, label: 'Nhà cung cấp', icon: Users },
   { to: ROUTES.WAREHOUSE_INBOUND, label: 'Quản lý kho nhập', icon: Warehouse },
@@ -37,7 +37,7 @@ export function MainLayout() {
   )
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen overflow-hidden bg-background">
       <aside
         className={cn(
           'fixed z-20 flex h-screen w-[248px] flex-col border-r border-border bg-card px-3.5 py-6 transition-transform lg:static lg:translate-x-0',
@@ -110,8 +110,8 @@ export function MainLayout() {
         />
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-[72px] items-center justify-between border-b border-border bg-card px-6 lg:px-10">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <header className="flex h-[72px] shrink-0 items-center justify-between border-b border-border bg-card px-6 lg:px-10">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -144,7 +144,7 @@ export function MainLayout() {
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-[1680px] flex-1 px-6 py-8 lg:px-10">
+        <main className="mx-auto min-h-0 w-full max-w-[1680px] flex-1 overflow-y-auto px-6 py-8 lg:px-10">
           <Outlet />
         </main>
       </div>
