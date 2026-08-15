@@ -1,4 +1,5 @@
 import './index.css'
+import '@/services/api/interceptors'
 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
