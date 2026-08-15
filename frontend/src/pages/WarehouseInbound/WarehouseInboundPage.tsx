@@ -2,6 +2,7 @@ import { Plus } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/Button'
+import { Spinner } from '@/components/ui/Spinner'
 import { DeleteWarehouseDialog } from '@/features/warehouses/components/DeleteWarehouseDialog'
 import { WarehouseFormDialog } from '@/features/warehouses/components/WarehouseFormDialog'
 import { WarehouseTable } from '@/features/warehouses/components/WarehouseTable'
@@ -42,7 +43,9 @@ export default function WarehouseInboundPage() {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">Đang tải...</p>
+        <div className="flex justify-center py-16">
+          <Spinner size={28} />
+        </div>
       ) : (
         <WarehouseTable
           warehouses={warehouses}
