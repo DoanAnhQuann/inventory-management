@@ -8,6 +8,8 @@ let products: Product[] = [
     code: 'VT-001',
     unit: 'Ram',
     price: 78500,
+    createdAt: '2026-06-01T08:00:00.000Z',
+    updatedAt: '2026-07-10T10:15:00.000Z',
   },
   {
     id: crypto.randomUUID(),
@@ -15,6 +17,8 @@ let products: Product[] = [
     code: 'VT-014',
     unit: 'Hộp',
     price: 1240000,
+    createdAt: '2026-06-15T09:30:00.000Z',
+    updatedAt: '2026-06-15T09:30:00.000Z',
   },
   {
     id: crypto.randomUUID(),
@@ -22,6 +26,8 @@ let products: Product[] = [
     code: 'VT-028',
     unit: 'Cái',
     price: 42000,
+    createdAt: '2026-07-01T14:00:00.000Z',
+    updatedAt: '2026-07-01T14:00:00.000Z',
   },
 ]
 
@@ -34,7 +40,8 @@ export async function getProducts(): Promise<Product[]> {
 
 export async function createProduct(payload: ProductFormValues): Promise<Product> {
   await delay()
-  const product: Product = { id: crypto.randomUUID(), ...payload }
+  const now = new Date().toISOString()
+  const product: Product = { id: crypto.randomUUID(), ...payload, createdAt: now, updatedAt: now }
   products = [product, ...products]
   return product
 }
@@ -42,9 +49,10 @@ export async function createProduct(payload: ProductFormValues): Promise<Product
 export async function updateProduct(id: string, payload: ProductFormValues): Promise<Product> {
   await delay()
   let updated: Product | undefined
+  const now = new Date().toISOString()
   products = products.map((product) => {
     if (product.id !== id) return product
-    updated = { ...product, ...payload }
+    updated = { ...product, ...payload, updatedAt: now }
     return updated
   })
   if (!updated) throw new Error('Không tìm thấy sản phẩm')

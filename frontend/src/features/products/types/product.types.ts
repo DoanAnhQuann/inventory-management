@@ -4,4 +4,6 @@ export interface Product {
   code: string
   unit: string
   price: number
+  createdAt: string
+  updatedAt: string
 }

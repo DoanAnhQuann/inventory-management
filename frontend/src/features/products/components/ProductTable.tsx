@@ -2,6 +2,7 @@ import { Pencil, Trash2 } from 'lucide-react'
 
 import { DataTable } from '@/components/ui/DataTable'
 import { formatCurrency } from '@/utils/currency'
+import { formatDateTime } from '@/utils/date'
 
 import type { Product } from '../types/product.types'
 
@@ -39,6 +40,20 @@ export function ProductTable({ products, onEdit, onDelete }: ProductTableProps) 
           className: 'text-right',
           render: (product) => (
             <span className="font-medium text-foreground">{formatCurrency(product.price)}</span>
+          ),
+        },
+        {
+          key: 'createdAt',
+          header: 'Ngày tạo',
+          render: (product) => (
+            <span className="text-muted-foreground">{formatDateTime(product.createdAt)}</span>
+          ),
+        },
+        {
+          key: 'updatedAt',
+          header: 'Ngày cập nhật',
+          render: (product) => (
+            <span className="text-muted-foreground">{formatDateTime(product.updatedAt)}</span>
           ),
         },
       ]}
@@ -95,6 +110,16 @@ export function ProductTable({ products, onEdit, onDelete }: ProductTableProps) 
             <span className="text-sm font-medium text-foreground">
               {formatCurrency(product.price)}
             </span>
+          </div>
+          <div className="flex gap-6 text-xs">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-muted-foreground">Ngày tạo</span>
+              <span className="text-foreground">{formatDateTime(product.createdAt)}</span>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <span className="text-muted-foreground">Ngày cập nhật</span>
+              <span className="text-foreground">{formatDateTime(product.updatedAt)}</span>
+            </div>
           </div>
         </div>
       )}
