@@ -1,0 +1,12 @@
+{
+  "name": "inventory-management",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Monorepo root — chỉ chứa tooling dùng chung (Git hooks). Code thật nằm trong frontend/ và backend/.",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}
