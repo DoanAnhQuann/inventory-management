@@ -1,7 +1,6 @@
 import {
   Archive,
   BarChart3,
-  Bell,
   ClipboardList,
   LayoutDashboard,
   Menu,
@@ -135,8 +134,8 @@ export function MainLayout() {
               className="relative grid place-items-center text-muted-foreground"
               aria-label="Thông báo"
             >
-              <Bell size={19} />
-              <i className="absolute right-0 top-0 size-1.5 rounded-full border border-card bg-destructive" />
+              {/* <Bell size={19} />
+              <i className="absolute right-0 top-0 size-1.5 rounded-full border border-card bg-destructive" /> */}
             </button>
             <Avatar
               initials="ĐA"

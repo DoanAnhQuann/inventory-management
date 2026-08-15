@@ -2,6 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { ConfigProvider } from 'antd'
 import { Suspense } from 'react'
 import { BrowserRouter } from 'react-router-dom'
+import { Toaster } from 'sonner'
 
 import { PageLoading } from '@/components/common/PageLoading'
 import { antdTheme } from '@/lib/antd-theme'
@@ -17,6 +18,12 @@ function App() {
             <AppRouter />
           </Suspense>
         </BrowserRouter>
+        <Toaster
+          position="top-right"
+          duration={3000}
+          richColors
+          toastOptions={{ style: { fontFamily: 'inherit' } }}
+        />
       </ConfigProvider>
     </QueryClientProvider>
   )
