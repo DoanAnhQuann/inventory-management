@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from 'lucide-react'
 
 import { DataTable } from '@/components/ui/DataTable'
+import type { PaginationProps } from '@/components/ui/Pagination'
 import { formatDateTime } from '@/utils/date'
 
 import type { Warehouse } from '../types/warehouse.types'
@@ -9,14 +10,16 @@ interface WarehouseTableProps {
   warehouses: Warehouse[]
   onEdit: (warehouse: Warehouse) => void
   onDelete: (warehouse: Warehouse) => void
+  pagination?: PaginationProps
 }
 
-export function WarehouseTable({ warehouses, onEdit, onDelete }: WarehouseTableProps) {
+export function WarehouseTable({ warehouses, onEdit, onDelete, pagination }: WarehouseTableProps) {
   return (
     <DataTable
       data={warehouses}
       getRowKey={(warehouse) => warehouse.id}
       emptyMessage='Chưa có kho nào. Bấm "Thêm kho" để tạo mới.'
+      pagination={pagination}
       columns={[
         {
           key: 'name',

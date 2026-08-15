@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from 'lucide-react'
 
 import { DataTable } from '@/components/ui/DataTable'
+import type { PaginationProps } from '@/components/ui/Pagination'
 import { formatDateTime } from '@/utils/date'
 
 import type { Supplier } from '../types/supplier.types'
@@ -9,14 +10,16 @@ interface SupplierTableProps {
   suppliers: Supplier[]
   onEdit: (supplier: Supplier) => void
   onDelete: (supplier: Supplier) => void
+  pagination?: PaginationProps
 }
 
-export function SupplierTable({ suppliers, onEdit, onDelete }: SupplierTableProps) {
+export function SupplierTable({ suppliers, onEdit, onDelete, pagination }: SupplierTableProps) {
   return (
     <DataTable
       data={suppliers}
       getRowKey={(supplier) => supplier.id}
       emptyMessage='Chưa có nhà cung cấp nào. Bấm "Thêm nhà cung cấp" để tạo mới.'
+      pagination={pagination}
       columns={[
         {
           key: 'name',

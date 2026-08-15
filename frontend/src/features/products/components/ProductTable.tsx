@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from 'lucide-react'
 
 import { DataTable } from '@/components/ui/DataTable'
+import type { PaginationProps } from '@/components/ui/Pagination'
 import { formatCurrency } from '@/utils/currency'
 import { formatDateTime } from '@/utils/date'
 
@@ -10,14 +11,16 @@ interface ProductTableProps {
   products: Product[]
   onEdit: (product: Product) => void
   onDelete: (product: Product) => void
+  pagination?: PaginationProps
 }
 
-export function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
+export function ProductTable({ products, onEdit, onDelete, pagination }: ProductTableProps) {
   return (
     <DataTable
       data={products}
       getRowKey={(product) => product.id}
       emptyMessage='Chưa có sản phẩm nào. Bấm "Thêm sản phẩm" để tạo mới.'
+      pagination={pagination}
       columns={[
         {
           key: 'name',

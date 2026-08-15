@@ -19,6 +19,8 @@ interface FormState {
   warehouse?: Warehouse
 }
 
+const PAGE_SIZE = 10
+
 export default function WarehouseInboundPage() {
   const { data: warehouses = [], isLoading } = useWarehouses()
   const createWarehouse = useCreateWarehouse()
@@ -27,6 +29,7 @@ export default function WarehouseInboundPage() {
 
   const [formState, setFormState] = useState<FormState | null>(null)
   const [warehouseToDelete, setWarehouseToDelete] = useState<Warehouse | null>(null)
+  const [page, setPage] = useState(1)
 
   return (
     <div className="flex flex-col gap-6">
@@ -48,9 +51,15 @@ export default function WarehouseInboundPage() {
         </div>
       ) : (
         <WarehouseTable
-          warehouses={warehouses}
+          warehouses={warehouses.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)}
           onEdit={(warehouse) => setFormState({ mode: 'edit', warehouse })}
           onDelete={setWarehouseToDelete}
+          pagination={{
+            current: page,
+            pageSize: PAGE_SIZE,
+            total: warehouses.length,
+            onChange: setPage,
+          }}
         />
       )}
 

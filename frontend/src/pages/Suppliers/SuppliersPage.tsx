@@ -19,6 +19,8 @@ interface FormState {
   supplier?: Supplier
 }
 
+const PAGE_SIZE = 10
+
 export default function SuppliersPage() {
   const { data: suppliers = [], isLoading } = useSuppliers()
   const createSupplier = useCreateSupplier()
@@ -27,6 +29,7 @@ export default function SuppliersPage() {
 
   const [formState, setFormState] = useState<FormState | null>(null)
   const [supplierToDelete, setSupplierToDelete] = useState<Supplier | null>(null)
+  const [page, setPage] = useState(1)
 
   return (
     <div className="flex flex-col gap-6">
@@ -46,9 +49,15 @@ export default function SuppliersPage() {
         </div>
       ) : (
         <SupplierTable
-          suppliers={suppliers}
+          suppliers={suppliers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)}
           onEdit={(supplier) => setFormState({ mode: 'edit', supplier })}
           onDelete={setSupplierToDelete}
+          pagination={{
+            current: page,
+            pageSize: PAGE_SIZE,
+            total: suppliers.length,
+            onChange: setPage,
+          }}
         />
       )}
 

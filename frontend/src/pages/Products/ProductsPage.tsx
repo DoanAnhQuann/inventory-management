@@ -19,6 +19,8 @@ interface FormState {
   product?: Product
 }
 
+const PAGE_SIZE = 10
+
 export default function ProductsPage() {
   const { data: products = [], isLoading } = useProducts()
   const createProduct = useCreateProduct()
@@ -27,6 +29,7 @@ export default function ProductsPage() {
 
   const [formState, setFormState] = useState<FormState | null>(null)
   const [productToDelete, setProductToDelete] = useState<Product | null>(null)
+  const [page, setPage] = useState(1)
 
   return (
     <div className="flex flex-col gap-6">
@@ -46,9 +49,15 @@ export default function ProductsPage() {
         </div>
       ) : (
         <ProductTable
-          products={products}
+          products={products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)}
           onEdit={(product) => setFormState({ mode: 'edit', product })}
           onDelete={setProductToDelete}
+          pagination={{
+            current: page,
+            pageSize: PAGE_SIZE,
+            total: products.length,
+            onChange: setPage,
+          }}
         />
       )}
 

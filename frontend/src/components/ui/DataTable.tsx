@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
 import { Card } from './Card'
+import { Pagination, type PaginationProps } from './Pagination'
 
 interface DataTableColumn<T> {
   key: string
@@ -18,6 +19,7 @@ interface DataTableProps<T> {
   renderActions?: (row: T) => ReactNode
   renderMobileCard: (row: T) => ReactNode
   emptyMessage: string
+  pagination?: PaginationProps
 }
 
 export function DataTable<T>({
@@ -27,13 +29,14 @@ export function DataTable<T>({
   renderActions,
   renderMobileCard,
   emptyMessage,
+  pagination,
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return <Card className="p-10 text-center text-sm text-muted-foreground">{emptyMessage}</Card>
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <Card className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[640px] border-collapse text-sm">
           <thead>
@@ -72,6 +75,8 @@ export function DataTable<T>({
           </Card>
         ))}
       </div>
-    </>
+
+      {pagination && <Pagination {...pagination} />}
+    </div>
   )
 }
