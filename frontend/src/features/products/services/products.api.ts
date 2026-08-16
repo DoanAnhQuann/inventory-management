@@ -29,6 +29,24 @@ let products: Product[] = [
     createdAt: '2026-07-01T14:00:00.000Z',
     updatedAt: '2026-07-01T14:00:00.000Z',
   },
+  {
+    id: crypto.randomUUID(),
+    name: 'Băng keo trong 5cm',
+    code: 'VT-043',
+    unit: 'Cuộn',
+    price: 15000,
+    createdAt: '2026-07-05T08:00:00.000Z',
+    updatedAt: '2026-07-05T08:00:00.000Z',
+  },
+  {
+    id: crypto.randomUUID(),
+    name: 'Sổ tay lò xo A5',
+    code: 'VT-052',
+    unit: 'Quyển',
+    price: 28000,
+    createdAt: '2026-07-20T08:00:00.000Z',
+    updatedAt: '2026-07-20T08:00:00.000Z',
+  },
 ]
 
 const delay = (ms = 300) => new Promise((resolve) => setTimeout(resolve, ms))

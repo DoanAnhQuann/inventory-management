@@ -460,7 +460,7 @@ export function GoodsReceiptForm() {
         open={pendingValues !== null}
         onClose={closeConfirm}
         title="Xác nhận tạo phiếu nhập kho"
-        className="max-w-4xl"
+        className="max-h-[calc(100vh-2rem)] max-w-4xl gap-3 p-4"
         footer={
           <>
             <Button type="button" variant="outline" onClick={closeConfirm} disabled={isConfirming}>
@@ -473,7 +473,7 @@ export function GoodsReceiptForm() {
         }
       >
         {pendingValues && (
-          <div className="max-h-[65vh] overflow-y-auto">
+          <div className="min-h-0 flex-1 overflow-y-auto">
             <GoodsReceiptPreview values={pendingValues} grandTotal={pendingGrandTotal} />
           </div>
         )}
