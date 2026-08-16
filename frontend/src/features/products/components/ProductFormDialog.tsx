@@ -47,7 +47,7 @@ export function ProductFormDialog({
       onClose={onClose}
       title={mode === 'create' ? 'Thêm sản phẩm mới' : 'Sửa thông tin sản phẩm'}
     >
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col gap-4" noValidate onSubmit={handleSubmit(onSubmit)}>
         <Input
           label="Tên sản phẩm"
           placeholder="VD: Giấy A4 Double A 80gsm"
@@ -72,7 +72,6 @@ export function ProductFormDialog({
           label="Đơn giá"
           type="number"
           min={0}
-          step="1000"
           placeholder="VD: 78500"
           error={errors.price?.message}
           {...register('price')}

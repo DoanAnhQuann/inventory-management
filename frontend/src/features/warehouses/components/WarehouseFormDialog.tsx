@@ -47,7 +47,7 @@ export function WarehouseFormDialog({
       onClose={onClose}
       title={mode === 'create' ? 'Thêm kho mới' : 'Sửa thông tin kho'}
     >
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col gap-4" noValidate onSubmit={handleSubmit(onSubmit)}>
         <Input
           label="Tên kho"
           placeholder="VD: Kho tổng Hà Nội"

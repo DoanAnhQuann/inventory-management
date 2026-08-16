@@ -47,7 +47,7 @@ export function SupplierFormDialog({
       onClose={onClose}
       title={mode === 'create' ? 'Thêm nhà cung cấp mới' : 'Sửa thông tin nhà cung cấp'}
     >
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col gap-4" noValidate onSubmit={handleSubmit(onSubmit)}>
         <Input
           label="Tên nhà cung cấp"
           placeholder="VD: Công ty TNHH Thiết bị Văn phòng Minh Long"
