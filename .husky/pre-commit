@@ -1,2 +1,7 @@
-cd frontend
-npx lint-staged
+if git diff --cached --name-only --diff-filter=ACMR | grep -q '^frontend/'; then
+  (cd frontend && npx lint-staged)
+fi
+
+if git diff --cached --name-only --diff-filter=ACMR | grep -q '^backend/'; then
+  (cd backend && npx lint-staged)
+fi
