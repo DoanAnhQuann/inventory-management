@@ -4,8 +4,13 @@ import type { ApiEnvelope } from '@/services/api/response.type'
 import type { GoodsReceiptFormValues } from '../schemas/goods-receipt.schema'
 import type { GoodsReceipt } from '../types/goods-receipt.types'
 
-export async function getGoodsReceipts(): Promise<GoodsReceipt[]> {
-  const response = await apiClient.get<ApiEnvelope<GoodsReceipt[]>>('/goods-receipts')
+export async function getGoodsReceipts(range?: {
+  from?: string
+  to?: string
+}): Promise<GoodsReceipt[]> {
+  const response = await apiClient.get<ApiEnvelope<GoodsReceipt[]>>('/goods-receipts', {
+    params: { from: range?.from || undefined, to: range?.to || undefined },
+  })
   return response.data.data
 }
 

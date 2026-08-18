@@ -17,3 +17,12 @@ export interface LowStockProduct {
   unit: string
   currentStock: number
 }
+
+export interface OverviewStats {
+  receiptCount: number
+  totalValue: number
+  totalQuantity: number
+  inStockProductCount: number
+  topProducts: TopProductStat[]
+  lowStockProducts: LowStockProduct[]
+}

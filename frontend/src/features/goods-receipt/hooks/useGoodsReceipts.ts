@@ -10,8 +10,11 @@ import { createGoodsReceipt, getGoodsReceipts } from '../services/goods-receipts
 
 const GOODS_RECEIPTS_KEY = ['goods-receipts']
 
-export function useGoodsReceipts() {
-  return useQuery({ queryKey: GOODS_RECEIPTS_KEY, queryFn: getGoodsReceipts })
+export function useGoodsReceipts(range?: { from?: string; to?: string }) {
+  return useQuery({
+    queryKey: [...GOODS_RECEIPTS_KEY, range?.from ?? '', range?.to ?? ''],
+    queryFn: () => getGoodsReceipts(range),
+  })
 }
 
 export function useCreateGoodsReceipt() {
