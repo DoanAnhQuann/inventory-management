@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
+import { DateRangeQueryDto } from '../../shared/query/date-range-query.dto';
 import { ResponseMessage } from '../../shared/response/response-message.decorator';
 import {
   CreateGoodsReceiptDto,
@@ -16,8 +17,8 @@ export class GoodsReceiptController {
 
   @Get()
   @ZodSerializerDto(GoodsReceiptListResDto)
-  findAll() {
-    return this.goodsReceiptService.findAll();
+  findAll(@Query() query: DateRangeQueryDto) {
+    return this.goodsReceiptService.findAll(query);
   }
 
   @Get(':id')

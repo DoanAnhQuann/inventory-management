@@ -7,13 +7,14 @@ import { COMMON_MESSAGE } from '../../shared/constants/message.constant';
 import { RESPONSE_CODE } from '../../shared/constants/response-code.constant';
 import { AppException } from '../../shared/exceptions/app.exception';
 import type { PrismaTransaction } from '../../shared/prisma/prisma.types';
+import type { DateRangeQuery } from '../../shared/query/date-range-query.dto';
 import { ProductRepo } from '../product/product.repo';
 import { SupplierRepo } from '../supplier/supplier.repo';
 import { WarehouseRepo } from '../warehouse/warehouse.repo';
 import { CreateGoodsReceiptDto } from './goods-receipt.dto';
 import { GOODS_RECEIPT_MESSAGE } from './goods-receipt.message';
 import type { GoodsReceipt } from './goods-receipt.model';
-import { GoodsReceiptRepo } from './goods-receipt.repo';
+import { buildReceiptDateWhere, GoodsReceiptRepo } from './goods-receipt.repo';
 
 type GoodsReceiptRow = Prisma.GoodsReceiptGetPayload<{
   include: { items: true; warehouse: true; supplier: true };
@@ -93,8 +94,10 @@ export class GoodsReceiptService {
     private readonly warehouseRepo: WarehouseRepo,
   ) {}
 
-  async findAll(): Promise<GoodsReceipt[]> {
-    const rows = await this.goodsReceiptRepo.findAll();
+  async findAll(query: DateRangeQuery = {}): Promise<GoodsReceipt[]> {
+    const rows = await this.goodsReceiptRepo.findAll(
+      buildReceiptDateWhere(query),
+    );
     return rows.map(toGoodsReceiptModel);
   }
 

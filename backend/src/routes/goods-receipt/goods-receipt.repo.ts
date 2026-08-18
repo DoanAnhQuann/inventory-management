@@ -5,12 +5,25 @@ import type {
   PrismaTransaction,
 } from '../../shared/prisma/prisma.types';
 import { PrismaService } from '../../shared/prisma/prisma.service';
+import type { DateRangeQuery } from '../../shared/query/date-range-query.dto';
 
 interface RecordInboundData {
   productId: string;
   warehouseId: string;
   goodsReceiptItemId: string;
   quantity: number;
+}
+
+export function buildReceiptDateWhere(
+  query: DateRangeQuery,
+): Prisma.GoodsReceiptWhereInput {
+  if (!query.from && !query.to) return {};
+  return {
+    receiptDate: {
+      ...(query.from ? { gte: new Date(query.from) } : {}),
+      ...(query.to ? { lte: new Date(query.to) } : {}),
+    },
+  };
 }
 
 @Injectable()
@@ -21,8 +34,12 @@ export class GoodsReceiptRepo {
     return this.prisma.$transaction(fn);
   }
 
-  findAll(tx: PrismaClientOrTx = this.prisma) {
+  findAll(
+    where: Prisma.GoodsReceiptWhereInput = {},
+    tx: PrismaClientOrTx = this.prisma,
+  ) {
     return tx.goodsReceipt.findMany({
+      where,
       include: { items: true, warehouse: true, supplier: true },
       orderBy: { createdAt: 'desc' },
     });

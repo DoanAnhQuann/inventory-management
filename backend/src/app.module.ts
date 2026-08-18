@@ -6,6 +6,7 @@ import { ProductModule } from './routes/product/product.module';
 import { SupplierModule } from './routes/supplier/supplier.module';
 import { WarehouseModule } from './routes/warehouse/warehouse.module';
 import { GoodsReceiptModule } from './routes/goods-receipt/goods-receipt.module';
+import { OverviewModule } from './routes/overview/overview.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { GoodsReceiptModule } from './routes/goods-receipt/goods-receipt.module'
     SupplierModule,
     WarehouseModule,
     GoodsReceiptModule,
+    OverviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],
