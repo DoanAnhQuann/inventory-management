@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import type { PrismaClientOrTx } from '../../shared/prisma/prisma.types';
 import { PrismaService } from '../../shared/prisma/prisma.service';
 import { CreateWarehouseDto, UpdateWarehouseDto } from './warehouse.dto';
 
@@ -6,29 +7,33 @@ import { CreateWarehouseDto, UpdateWarehouseDto } from './warehouse.dto';
 export class WarehouseRepo {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.warehouse.findMany({ orderBy: { createdAt: 'desc' } });
+  findAll(tx: PrismaClientOrTx = this.prisma) {
+    return tx.warehouse.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
-  findById(id: string) {
-    return this.prisma.warehouse.findUnique({ where: { id } });
+  findById(id: string, tx: PrismaClientOrTx = this.prisma) {
+    return tx.warehouse.findUnique({ where: { id } });
   }
 
-  findByNameInsensitive(name: string) {
-    return this.prisma.warehouse.findFirst({
+  findByNameInsensitive(name: string, tx: PrismaClientOrTx = this.prisma) {
+    return tx.warehouse.findFirst({
       where: { name: { equals: name, mode: 'insensitive' } },
     });
   }
 
-  create(data: CreateWarehouseDto) {
-    return this.prisma.warehouse.create({ data });
+  create(data: CreateWarehouseDto, tx: PrismaClientOrTx = this.prisma) {
+    return tx.warehouse.create({ data });
   }
 
-  update(id: string, data: UpdateWarehouseDto) {
-    return this.prisma.warehouse.update({ where: { id }, data });
+  update(
+    id: string,
+    data: UpdateWarehouseDto,
+    tx: PrismaClientOrTx = this.prisma,
+  ) {
+    return tx.warehouse.update({ where: { id }, data });
   }
 
-  delete(id: string) {
-    return this.prisma.warehouse.delete({ where: { id } });
+  delete(id: string, tx: PrismaClientOrTx = this.prisma) {
+    return tx.warehouse.delete({ where: { id } });
   }
 }

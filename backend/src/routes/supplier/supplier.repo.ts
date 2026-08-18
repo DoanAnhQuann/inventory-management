@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import type { PrismaClientOrTx } from '../../shared/prisma/prisma.types';
 import { PrismaService } from '../../shared/prisma/prisma.service';
 import { CreateSupplierDto, UpdateSupplierDto } from './supplier.dto';
 
@@ -6,29 +7,33 @@ import { CreateSupplierDto, UpdateSupplierDto } from './supplier.dto';
 export class SupplierRepo {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.supplier.findMany({ orderBy: { createdAt: 'desc' } });
+  findAll(tx: PrismaClientOrTx = this.prisma) {
+    return tx.supplier.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
-  findById(id: string) {
-    return this.prisma.supplier.findUnique({ where: { id } });
+  findById(id: string, tx: PrismaClientOrTx = this.prisma) {
+    return tx.supplier.findUnique({ where: { id } });
   }
 
-  findByNameInsensitive(name: string) {
-    return this.prisma.supplier.findFirst({
+  findByNameInsensitive(name: string, tx: PrismaClientOrTx = this.prisma) {
+    return tx.supplier.findFirst({
       where: { name: { equals: name, mode: 'insensitive' } },
     });
   }
 
-  create(data: CreateSupplierDto) {
-    return this.prisma.supplier.create({ data });
+  create(data: CreateSupplierDto, tx: PrismaClientOrTx = this.prisma) {
+    return tx.supplier.create({ data });
   }
 
-  update(id: string, data: UpdateSupplierDto) {
-    return this.prisma.supplier.update({ where: { id }, data });
+  update(
+    id: string,
+    data: UpdateSupplierDto,
+    tx: PrismaClientOrTx = this.prisma,
+  ) {
+    return tx.supplier.update({ where: { id }, data });
   }
 
-  delete(id: string) {
-    return this.prisma.supplier.delete({ where: { id } });
+  delete(id: string, tx: PrismaClientOrTx = this.prisma) {
+    return tx.supplier.delete({ where: { id } });
   }
 }

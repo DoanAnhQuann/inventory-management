@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import type { PrismaClientOrTx } from '../../shared/prisma/prisma.types';
 import { PrismaService } from '../../shared/prisma/prisma.service';
 import { CreateProductDto, UpdateProductDto } from './product.dto';
 
@@ -6,35 +7,39 @@ import { CreateProductDto, UpdateProductDto } from './product.dto';
 export class ProductRepo {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.product.findMany({ orderBy: { createdAt: 'desc' } });
+  findAll(tx: PrismaClientOrTx = this.prisma) {
+    return tx.product.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
-  findById(id: string) {
-    return this.prisma.product.findUnique({ where: { id } });
+  findById(id: string, tx: PrismaClientOrTx = this.prisma) {
+    return tx.product.findUnique({ where: { id } });
   }
 
-  findByCodeInsensitive(code: string) {
-    return this.prisma.product.findFirst({
+  findByCodeInsensitive(code: string, tx: PrismaClientOrTx = this.prisma) {
+    return tx.product.findFirst({
       where: { code: { equals: code, mode: 'insensitive' } },
     });
   }
 
-  findByNameInsensitive(name: string) {
-    return this.prisma.product.findFirst({
+  findByNameInsensitive(name: string, tx: PrismaClientOrTx = this.prisma) {
+    return tx.product.findFirst({
       where: { name: { equals: name, mode: 'insensitive' } },
     });
   }
 
-  create(data: CreateProductDto) {
-    return this.prisma.product.create({ data });
+  create(data: CreateProductDto, tx: PrismaClientOrTx = this.prisma) {
+    return tx.product.create({ data });
   }
 
-  update(id: string, data: UpdateProductDto) {
-    return this.prisma.product.update({ where: { id }, data });
+  update(
+    id: string,
+    data: UpdateProductDto,
+    tx: PrismaClientOrTx = this.prisma,
+  ) {
+    return tx.product.update({ where: { id }, data });
   }
 
-  delete(id: string) {
-    return this.prisma.product.delete({ where: { id } });
+  delete(id: string, tx: PrismaClientOrTx = this.prisma) {
+    return tx.product.delete({ where: { id } });
   }
 }
