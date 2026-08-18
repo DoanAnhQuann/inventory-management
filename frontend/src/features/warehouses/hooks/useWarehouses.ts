@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
+import { getApiErrorMessage } from '@/services/api/error-handler'
+
 import type { WarehouseFormValues } from '../schemas/warehouse.schema'
 import {
   createWarehouse,
@@ -19,11 +21,11 @@ export function useCreateWarehouse() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: createWarehouse,
-    onSuccess: () => {
+    onSuccess: ({ message }) => {
       queryClient.invalidateQueries({ queryKey: WAREHOUSES_KEY })
-      toast.success('Đã thêm kho mới')
+      toast.success(message)
     },
-    onError: () => toast.error('Thêm kho thất bại, thử lại sau'),
+    onError: (error) => toast.error(getApiErrorMessage(error)),
   })
 }
 
@@ -32,11 +34,11 @@ export function useUpdateWarehouse() {
   return useMutation({
     mutationFn: ({ id, payload }: { id: string; payload: WarehouseFormValues }) =>
       updateWarehouse(id, payload),
-    onSuccess: () => {
+    onSuccess: ({ message }) => {
       queryClient.invalidateQueries({ queryKey: WAREHOUSES_KEY })
-      toast.success('Đã cập nhật kho')
+      toast.success(message)
     },
-    onError: () => toast.error('Cập nhật kho thất bại, thử lại sau'),
+    onError: (error) => toast.error(getApiErrorMessage(error)),
   })
 }
 
@@ -44,10 +46,10 @@ export function useDeleteWarehouse() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: deleteWarehouse,
-    onSuccess: () => {
+    onSuccess: ({ message }) => {
       queryClient.invalidateQueries({ queryKey: WAREHOUSES_KEY })
-      toast.success('Đã xoá kho')
+      toast.success(message)
     },
-    onError: () => toast.error('Xoá kho thất bại, thử lại sau'),
+    onError: (error) => toast.error(getApiErrorMessage(error)),
   })
 }

@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
+import { getApiErrorMessage } from '@/services/api/error-handler'
+
 import type { ProductFormValues } from '../schemas/product.schema'
 import { createProduct, deleteProduct, getProducts, updateProduct } from '../services/products.api'
 
@@ -14,11 +16,11 @@ export function useCreateProduct() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: createProduct,
-    onSuccess: () => {
+    onSuccess: ({ message }) => {
       queryClient.invalidateQueries({ queryKey: PRODUCTS_KEY })
-      toast.success('Đã thêm sản phẩm mới')
+      toast.success(message)
     },
-    onError: () => toast.error('Thêm sản phẩm thất bại, thử lại sau'),
+    onError: (error) => toast.error(getApiErrorMessage(error)),
   })
 }
 
@@ -27,11 +29,11 @@ export function useUpdateProduct() {
   return useMutation({
     mutationFn: ({ id, payload }: { id: string; payload: ProductFormValues }) =>
       updateProduct(id, payload),
-    onSuccess: () => {
+    onSuccess: ({ message }) => {
       queryClient.invalidateQueries({ queryKey: PRODUCTS_KEY })
-      toast.success('Đã cập nhật sản phẩm')
+      toast.success(message)
     },
-    onError: () => toast.error('Cập nhật sản phẩm thất bại, thử lại sau'),
+    onError: (error) => toast.error(getApiErrorMessage(error)),
   })
 }
 
@@ -39,10 +41,10 @@ export function useDeleteProduct() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: deleteProduct,
-    onSuccess: () => {
+    onSuccess: ({ message }) => {
       queryClient.invalidateQueries({ queryKey: PRODUCTS_KEY })
-      toast.success('Đã xoá sản phẩm')
+      toast.success(message)
     },
-    onError: () => toast.error('Xoá sản phẩm thất bại, thử lại sau'),
+    onError: (error) => toast.error(getApiErrorMessage(error)),
   })
 }

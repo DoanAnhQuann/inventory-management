@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
+import { getApiErrorMessage } from '@/services/api/error-handler'
+
 import type { SupplierFormValues } from '../schemas/supplier.schema'
 import {
   createSupplier,
@@ -19,11 +21,11 @@ export function useCreateSupplier() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: createSupplier,
-    onSuccess: () => {
+    onSuccess: ({ message }) => {
       queryClient.invalidateQueries({ queryKey: SUPPLIERS_KEY })
-      toast.success('Đã thêm nhà cung cấp mới')
+      toast.success(message)
     },
-    onError: () => toast.error('Thêm nhà cung cấp thất bại, thử lại sau'),
+    onError: (error) => toast.error(getApiErrorMessage(error)),
   })
 }
 
@@ -32,11 +34,11 @@ export function useUpdateSupplier() {
   return useMutation({
     mutationFn: ({ id, payload }: { id: string; payload: SupplierFormValues }) =>
       updateSupplier(id, payload),
-    onSuccess: () => {
+    onSuccess: ({ message }) => {
       queryClient.invalidateQueries({ queryKey: SUPPLIERS_KEY })
-      toast.success('Đã cập nhật nhà cung cấp')
+      toast.success(message)
     },
-    onError: () => toast.error('Cập nhật nhà cung cấp thất bại, thử lại sau'),
+    onError: (error) => toast.error(getApiErrorMessage(error)),
   })
 }
 
@@ -44,10 +46,10 @@ export function useDeleteSupplier() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: deleteSupplier,
-    onSuccess: () => {
+    onSuccess: ({ message }) => {
       queryClient.invalidateQueries({ queryKey: SUPPLIERS_KEY })
-      toast.success('Đã xoá nhà cung cấp')
+      toast.success(message)
     },
-    onError: () => toast.error('Xoá nhà cung cấp thất bại, thử lại sau'),
+    onError: (error) => toast.error(getApiErrorMessage(error)),
   })
 }

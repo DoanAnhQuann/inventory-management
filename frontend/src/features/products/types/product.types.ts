@@ -4,6 +4,7 @@ export interface Product {
   code: string
   unit: string
   price: number
+  minStockThreshold: number | null
   createdAt: string
   updatedAt: string
 }

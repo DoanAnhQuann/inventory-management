@@ -3,5 +3,6 @@ export interface Warehouse {
   name: string
   location: string
   createdAt: string
+  updatedAt: string
   inboundAt: string
 }
