@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { ZodValidationException } from 'nestjs-zod';
 import { ZodError } from 'zod';
 import { COMMON_MESSAGE } from '../constants/message.constant';
 import {
@@ -49,6 +50,13 @@ interface ResolvedException {
   errors: unknown;
 }
 
+function mapZodIssues(error: ZodError) {
+  return error.issues.map((issue) => ({
+    field: issue.path.join('.'),
+    message: issue.message,
+  }));
+}
+
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
@@ -89,20 +97,35 @@ export class AllExceptionsFilter implements ExceptionFilter {
         status: HttpStatus.BAD_REQUEST,
         code: RESPONSE_CODE.VALIDATION_ERROR,
         message: COMMON_MESSAGE.VALIDATION_ERROR,
-        errors: exception.issues.map((issue) => ({
-          field: issue.path.join('.'),
-          message: issue.message,
-        })),
+        errors: mapZodIssues(exception),
+      };
+    }
+
+    if (exception instanceof ZodValidationException) {
+      const zodError = exception.getZodError();
+      return {
+        status: HttpStatus.BAD_REQUEST,
+        code: RESPONSE_CODE.VALIDATION_ERROR,
+        message: COMMON_MESSAGE.VALIDATION_ERROR,
+        errors: zodError instanceof ZodError ? mapZodIssues(zodError) : [],
       };
     }
 
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
       const defaults = HTTP_STATUS_DEFAULT[status];
+      const fallbackCode =
+        status >= 500
+          ? RESPONSE_CODE.INTERNAL_SERVER_ERROR
+          : RESPONSE_CODE.BAD_REQUEST;
+      const fallbackMessage =
+        status >= 500
+          ? COMMON_MESSAGE.INTERNAL_SERVER_ERROR
+          : exception.message;
       return {
         status,
-        code: defaults?.code ?? RESPONSE_CODE.BAD_REQUEST,
-        message: defaults?.message ?? exception.message,
+        code: defaults?.code ?? fallbackCode,
+        message: defaults?.message ?? fallbackMessage,
         errors: [],
       };
     }
