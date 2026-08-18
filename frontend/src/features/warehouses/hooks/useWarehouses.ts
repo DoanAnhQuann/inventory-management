@@ -11,7 +11,7 @@ import {
   updateWarehouse,
 } from '../services/warehouses.api'
 
-const WAREHOUSES_KEY = ['warehouses']
+export const WAREHOUSES_KEY = ['warehouses']
 
 export function useWarehouses() {
   return useQuery({ queryKey: WAREHOUSES_KEY, queryFn: getWarehouses })

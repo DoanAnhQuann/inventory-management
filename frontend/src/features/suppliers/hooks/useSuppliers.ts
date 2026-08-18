@@ -11,7 +11,7 @@ import {
   updateSupplier,
 } from '../services/suppliers.api'
 
-const SUPPLIERS_KEY = ['suppliers']
+export const SUPPLIERS_KEY = ['suppliers']
 
 export function useSuppliers() {
   return useQuery({ queryKey: SUPPLIERS_KEY, queryFn: getSuppliers })

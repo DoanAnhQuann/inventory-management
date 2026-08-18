@@ -6,7 +6,7 @@ import { getApiErrorMessage } from '@/services/api/error-handler'
 import type { ProductFormValues } from '../schemas/product.schema'
 import { createProduct, deleteProduct, getProducts, updateProduct } from '../services/products.api'
 
-const PRODUCTS_KEY = ['products']
+export const PRODUCTS_KEY = ['products']
 
 export function useProducts() {
   return useQuery({ queryKey: PRODUCTS_KEY, queryFn: getProducts })

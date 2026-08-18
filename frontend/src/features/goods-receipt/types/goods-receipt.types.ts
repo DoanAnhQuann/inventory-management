@@ -22,7 +22,6 @@ export interface GoodsReceipt {
   attachedDocuments: string
   amountInWords: string
   note?: string
-  warehouseLocation?: string
   items: GoodsReceiptItem[]
   totalAmount: number
   createdAt: string

@@ -8,9 +8,9 @@ import { Card } from '@/components/ui/Card'
 import { Combobox } from '@/components/ui/Combobox'
 import { Dialog } from '@/components/ui/Dialog'
 import { Input } from '@/components/ui/Input'
-import { useCreateProduct, useProducts } from '@/features/products/hooks/useProducts'
-import { useCreateSupplier, useSuppliers } from '@/features/suppliers/hooks/useSuppliers'
-import { useCreateWarehouse, useWarehouses } from '@/features/warehouses/hooks/useWarehouses'
+import { useProducts } from '@/features/products/hooks/useProducts'
+import { useSuppliers } from '@/features/suppliers/hooks/useSuppliers'
+import { useWarehouses } from '@/features/warehouses/hooks/useWarehouses'
 import { cn } from '@/lib/cn'
 import { formatCurrency } from '@/utils/currency'
 import { numberToVietnameseWords } from '@/utils/numberToWords'
@@ -56,9 +56,6 @@ export function GoodsReceiptForm() {
   const { data: suppliers = [] } = useSuppliers()
   const { data: products = [] } = useProducts()
 
-  const createWarehouse = useCreateWarehouse()
-  const createSupplier = useCreateSupplier()
-  const createProduct = useCreateProduct()
   const createGoodsReceipt = useCreateGoodsReceipt()
 
   const {
@@ -81,15 +78,6 @@ export function GoodsReceiptForm() {
     (sum, item) => sum + (Number(item.quantity) || 0) * (Number(item.price) || 0),
     0,
   )
-
-  // KHÔNG dùng dirtyFields.amountInWords để phát hiện "người dùng đã tự sửa" — dirty của RHF
-  // chỉ so giá trị hiện tại với default (''), không phân biệt được giá trị khác default là do
-  // NGƯỜI DÙNG gõ hay do CHÍNH effect này set. Hậu quả thật: sau khi effect tự điền 1 lần (giá
-  // trị khác '' → coi như dirty), bất kỳ thao tác nào khác trên form (vd. useFieldArray append
-  // thêm dòng sản phẩm) khiến RHF tính lại dirtyFields và phát hiện đúng "khác default" → tự
-  // gắn dirty=true dù người dùng chưa từng chạm vào field này — chặn cứng auto-fill từ đó về
-  // sau (bug thật, xem process.md). Fix: tự lưu giá trị lần cuối CHÍNH TA set vào 1 ref, chỉ
-  // auto-fill tiếp nếu giá trị hiện tại còn khớp với ref đó (nghĩa là chưa ai gõ đè lên).
   const lastAutoFilledAmountRef = useRef('')
 
   useEffect(() => {
@@ -114,9 +102,6 @@ export function GoodsReceiptForm() {
       (warehouse) => warehouse.name.toLowerCase() === warehouseNameTrimmed.toLowerCase(),
     )
 
-  // Chạy khi bấm "Tạo phiếu nhập kho" — sau khi zod đã pass, còn 1 điều kiện động zod không biết
-  // được (kho MỚI thì bắt buộc có địa điểm, mục 43 frontend-requirement.md) kiểm tra ở đây. Qua
-  // được thì CHƯA tạo gì cả — chỉ mở popup xem trước để người dùng xác nhận lần cuối.
   const openConfirm = (values: GoodsReceiptFormValues) => {
     const warehouseTrimmed = values.warehouseName.trim()
     const existingWarehouse = warehouses.find(
@@ -131,45 +116,11 @@ export function GoodsReceiptForm() {
 
   const closeConfirm = () => setPendingValues(null)
 
-  // Chạy khi bấm "Xác nhận tạo" trong popup xem trước — lúc này mới thật sự gọi API.
   const handleConfirmCreate = async () => {
     if (!pendingValues) return
-    const values = pendingValues
     setIsConfirming(true)
     try {
-      const warehouseTrimmed = values.warehouseName.trim()
-      const existingWarehouse = warehouses.find(
-        (w) => w.name.toLowerCase() === warehouseTrimmed.toLowerCase(),
-      )
-      if (!existingWarehouse) {
-        await createWarehouse.mutateAsync({
-          name: warehouseTrimmed,
-          location: values.warehouseLocation!.trim(),
-        })
-      }
-
-      const supplierTrimmed = values.supplierName.trim()
-      if (!suppliers.some((s) => s.name.toLowerCase() === supplierTrimmed.toLowerCase())) {
-        await createSupplier.mutateAsync({ name: supplierTrimmed })
-      }
-
-      const createdProductNames = new Set<string>()
-      for (const item of values.items) {
-        const nameTrimmed = item.productName.trim()
-        const key = nameTrimmed.toLowerCase()
-        const exists = products.some((p) => p.name.toLowerCase() === key)
-        if (!exists && !createdProductNames.has(key)) {
-          createdProductNames.add(key)
-          await createProduct.mutateAsync({
-            name: nameTrimmed,
-            code: item.productCode.trim(),
-            unit: item.unit.trim(),
-            price: item.price,
-          })
-        }
-      }
-
-      await createGoodsReceipt.mutateAsync(values)
+      await createGoodsReceipt.mutateAsync(pendingValues)
       reset(emptyValues())
       setTab('form')
       setPendingValues(null)
