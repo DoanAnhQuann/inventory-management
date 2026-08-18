@@ -12,3 +12,123 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum MovementType {
+  IN
+  OUT
+}
+
+model Supplier {
+  id            String         @id @default(uuid())
+  name          String         @unique
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  goodsReceipts GoodsReceipt[]
+
+  @@map("suppliers")
+}
+
+model Warehouse {
+  id             String          @id @default(uuid())
+  name           String          @unique
+  location       String
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  inboundAt      DateTime        @default(now()) @map("inbound_at")
+  goodsReceipts  GoodsReceipt[]
+  stockMovements StockMovement[]
+  productStocks  ProductStock[]
+
+  @@map("warehouses")
+}
+
+model Product {
+  id                String             @id @default(uuid())
+  code              String             @unique
+  name              String             @unique
+  unit              String
+  price             Decimal            @db.Decimal(14, 0)
+  minStockThreshold Int?               @map("min_stock_threshold")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  goodsReceiptItems GoodsReceiptItem[]
+  stockMovements    StockMovement[]
+  productStocks     ProductStock[]
+
+  @@map("products")
+}
+
+model GoodsReceipt {
+  id                String             @id @default(uuid())
+  code              String             @unique
+  warehouseId       String             @map("warehouse_id")
+  warehouse         Warehouse          @relation(fields: [warehouseId], references: [id])
+  supplierId        String             @map("supplier_id")
+  supplier          Supplier           @relation(fields: [supplierId], references: [id])
+  receiptDate       DateTime           @map("receipt_date") @db.Date
+  unitName          String             @map("unit_name")
+  department        String
+  delivererName     String             @map("deliverer_name")
+  invoiceNumber     String             @map("invoice_number")
+  invoiceDate       DateTime           @map("invoice_date") @db.Date
+  debitAccount      String             @map("debit_account")
+  creditAccount     String             @map("credit_account")
+  attachedDocuments String             @map("attached_documents")
+  amountInWords     String             @map("amount_in_words")
+  note              String?
+  totalAmount       Decimal            @map("total_amount") @db.Decimal(16, 0)
+  createdAt         DateTime           @default(now()) @map("created_at")
+  items             GoodsReceiptItem[]
+
+  @@index([receiptDate])
+  @@map("goods_receipts")
+}
+
+model GoodsReceiptItem {
+  id                  String         @id @default(uuid())
+  goodsReceiptId      String         @map("goods_receipt_id")
+  goodsReceipt        GoodsReceipt   @relation(fields: [goodsReceiptId], references: [id], onDelete: Cascade)
+  productId           String         @map("product_id")
+  product             Product        @relation(fields: [productId], references: [id])
+  productCodeSnapshot String         @map("product_code_snapshot")
+  productNameSnapshot String         @map("product_name_snapshot")
+  unitSnapshot        String         @map("unit_snapshot")
+  quantity            Int
+  unitPrice           Decimal        @map("unit_price") @db.Decimal(14, 0)
+  lineTotal           Decimal        @map("line_total") @db.Decimal(16, 0)
+  stockMovement       StockMovement?
+
+  @@index([productId])
+  @@map("goods_receipt_items")
+}
+
+model StockMovement {
+  id                 String            @id @default(uuid())
+  productId          String            @map("product_id")
+  product            Product           @relation(fields: [productId], references: [id])
+  warehouseId        String            @map("warehouse_id")
+  warehouse          Warehouse         @relation(fields: [warehouseId], references: [id])
+  goodsReceiptItemId String?           @unique @map("goods_receipt_item_id")
+  goodsReceiptItem    GoodsReceiptItem? @relation(fields: [goodsReceiptItemId], references: [id])
+  movementType        MovementType     @default(IN) @map("movement_type")
+  quantityChange       Int             @map("quantity_change")
+  balanceAfter         Int             @map("balance_after")
+  note                 String?
+  createdAt            DateTime        @default(now()) @map("created_at")
+
+  @@index([productId, warehouseId, createdAt])
+  @@map("stock_movements")
+}
+
+model ProductStock {
+  productId       String    @map("product_id")
+  product         Product   @relation(fields: [productId], references: [id])
+  warehouseId     String    @map("warehouse_id")
+  warehouse       Warehouse @relation(fields: [warehouseId], references: [id])
+  currentQuantity Int       @default(0) @map("current_quantity")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@id([productId, warehouseId])
+  @@map("product_stock")
+}
+
