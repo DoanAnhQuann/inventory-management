@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 import type { Prisma } from '../../../generated/prisma/client';
 import type { PrismaClientOrTx } from '../../shared/prisma/prisma.types';
 import { PrismaService } from '../../shared/prisma/prisma.service';
-
-interface StockRow {
-  productId: string;
-  currentStock: number;
-}
+import {
+  getCurrentStockByProduct,
+  type ProductStockRow,
+} from '../../shared/stock/product-stock.repo';
 
 @Injectable()
 export class OverviewRepo {
@@ -60,27 +59,16 @@ export class OverviewRepo {
     });
   }
 
-  async getCurrentStockByProduct(
+  getCurrentStockByProduct(
     tx: PrismaClientOrTx = this.prisma,
-  ): Promise<StockRow[]> {
-    const grouped = await tx.productStock.groupBy({
-      by: ['productId'],
-      _sum: { currentQuantity: true },
-    });
-    return grouped.map((row) => ({
-      productId: row.productId,
-      currentStock: row._sum.currentQuantity ?? 0,
-    }));
+  ): Promise<ProductStockRow[]> {
+    return getCurrentStockByProduct(tx);
   }
 
   async getStockAsOfDate(
     asOfDate: Date,
     tx: PrismaClientOrTx = this.prisma,
-  ): Promise<StockRow[]> {
-    // Lọc theo receipt_date (ngày chứng từ, ý nghĩa nghiệp vụ "tồn kho tính đến ngày X") —
-    // KHÔNG lọc theo stock_movements.created_at (thời điểm nhập liệu thật vào hệ thống, có thể
-    // khác ngày chứng từ nếu nhập trễ/backdate). Trong tập đã lọc, vẫn sắp theo created_at để
-    // lấy đúng dòng balance_after cuối cùng đã cộng dồn thật sự.
+  ): Promise<ProductStockRow[]> {
     const rows = await tx.$queryRaw<
       { productId: string; currentStock: bigint }[]
     >`
