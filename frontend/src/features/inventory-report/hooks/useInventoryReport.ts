@@ -1,7 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getStockMovements } from '../services/inventory-report.api'
+import { getProductMovements, getProductStockSummaries } from '../services/inventory-report.api'
 
-export function useStockMovements() {
-  return useQuery({ queryKey: ['stock-movements'], queryFn: getStockMovements })
+export function useProductStockSummaries() {
+  return useQuery({ queryKey: ['inventory-report-products'], queryFn: getProductStockSummaries })
+}
+
+export function useProductMovements(productId: string | null) {
+  return useQuery({
+    queryKey: ['inventory-report-movements', productId],
+    queryFn: () => getProductMovements(productId as string),
+    enabled: productId !== null,
+  })
 }

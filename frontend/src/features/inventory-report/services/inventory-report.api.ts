@@ -1,151 +1,18 @@
-import type { StockMovement } from '../types/stock-movement.types'
+import { apiClient } from '@/services/api/client'
+import type { ApiEnvelope } from '@/services/api/response.type'
 
-const movements: StockMovement[] = [
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-001',
-    productName: 'Giấy A4 Double A 80gsm',
-    unit: 'Ram',
-    date: '2026-08-01T08:00:00.000Z',
-    change: 30,
-    balanceAfter: 30,
-    note: 'Nhập đầu kỳ',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-001',
-    productName: 'Giấy A4 Double A 80gsm',
-    unit: 'Ram',
-    date: '2026-08-04T09:00:00.000Z',
-    change: 10,
-    balanceAfter: 40,
-    note: 'Nhập bổ sung',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-001',
-    productName: 'Giấy A4 Double A 80gsm',
-    unit: 'Ram',
-    date: '2026-08-06T09:00:00.000Z',
-    change: 8,
-    balanceAfter: 48,
-    note: 'Nhập bổ sung',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-001',
-    productName: 'Giấy A4 Double A 80gsm',
-    unit: 'Ram',
-    date: '2026-08-08T09:00:00.000Z',
-    change: 12,
-    balanceAfter: 60,
-    note: 'Nhập từ nhà cung cấp',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-001',
-    productName: 'Giấy A4 Double A 80gsm',
-    unit: 'Ram',
-    date: '2026-08-10T09:00:00.000Z',
-    change: 15,
-    balanceAfter: 75,
-    note: 'Nhập từ nhà cung cấp',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-001',
-    productName: 'Giấy A4 Double A 80gsm',
-    unit: 'Ram',
-    date: '2026-08-11T09:00:00.000Z',
-    change: 6,
-    balanceAfter: 81,
-    note: 'Nhập bổ sung',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-001',
-    productName: 'Giấy A4 Double A 80gsm',
-    unit: 'Ram',
-    date: '2026-08-12T09:00:00.000Z',
-    change: 9,
-    balanceAfter: 90,
-    note: 'Nhập bổ sung',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-001',
-    productName: 'Giấy A4 Double A 80gsm',
-    unit: 'Ram',
-    date: '2026-08-13T09:00:00.000Z',
-    change: 7,
-    balanceAfter: 97,
-    note: 'Nhập bổ sung',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-001',
-    productName: 'Giấy A4 Double A 80gsm',
-    unit: 'Ram',
-    date: '2026-08-14T14:00:00.000Z',
-    change: 5,
-    balanceAfter: 102,
-    note: 'Nhập bổ sung',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-001',
-    productName: 'Giấy A4 Double A 80gsm',
-    unit: 'Ram',
-    date: '2026-08-15T09:30:00.000Z',
-    change: 10,
-    balanceAfter: 112,
-    note: 'Nhập bổ sung',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-002',
-    productName: 'Mực in laser đen HP 76A',
-    unit: 'Hộp',
-    date: '2026-08-02T08:00:00.000Z',
-    change: 10,
-    balanceAfter: 10,
-    note: 'Nhập đầu kỳ',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-002',
-    productName: 'Mực in laser đen HP 76A',
-    unit: 'Hộp',
-    date: '2026-08-13T09:00:00.000Z',
-    change: 5,
-    balanceAfter: 15,
-    note: 'Nhập bổ sung',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-003',
-    productName: 'Bìa hồ sơ còng 7cm',
-    unit: 'Cái',
-    date: '2026-08-03T08:00:00.000Z',
-    change: 100,
-    balanceAfter: 100,
-    note: 'Nhập đầu kỳ',
-  },
-  {
-    id: crypto.randomUUID(),
-    productId: 'sp-003',
-    productName: 'Bìa hồ sơ còng 7cm',
-    unit: 'Cái',
-    date: '2026-08-12T10:00:00.000Z',
-    change: 30,
-    balanceAfter: 130,
-    note: 'Nhập bổ sung',
-  },
-]
+import type { ProductStockSummary, StockMovement } from '../types/stock-movement.types'
 
-const delay = (ms = 300) => new Promise((resolve) => setTimeout(resolve, ms))
+export async function getProductStockSummaries(): Promise<ProductStockSummary[]> {
+  const response = await apiClient.get<ApiEnvelope<ProductStockSummary[]>>(
+    '/inventory-report/products',
+  )
+  return response.data.data
+}
 
-export async function getStockMovements(): Promise<StockMovement[]> {
-  await delay()
-  return movements
+export async function getProductMovements(productId: string): Promise<StockMovement[]> {
+  const response = await apiClient.get<ApiEnvelope<StockMovement[]>>(
+    `/inventory-report/products/${productId}/movements`,
+  )
+  return response.data.data
 }

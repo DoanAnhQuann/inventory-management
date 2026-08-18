@@ -6,57 +6,30 @@ import { Input } from '@/components/ui/Input'
 import { Spinner } from '@/components/ui/Spinner'
 import { MovementTimeline } from '@/features/inventory-report/components/MovementTimeline'
 import { ProductStockList } from '@/features/inventory-report/components/ProductStockList'
-import { useStockMovements } from '@/features/inventory-report/hooks/useInventoryReport'
-import type { ProductStockSummary } from '@/features/inventory-report/types/stock-movement.types'
+import {
+  useProductMovements,
+  useProductStockSummaries,
+} from '@/features/inventory-report/hooks/useInventoryReport'
 
 export default function InventoryReportPage() {
-  const { data: movements = [], isLoading } = useStockMovements()
+  const { data: products = [], isLoading: productsLoading } = useProductStockSummaries()
   const [search, setSearch] = useState('')
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
 
-  const productsSummary = useMemo(() => {
-    const summaryByProduct = new Map<string, ProductStockSummary>()
-    for (const movement of movements) {
-      const existing = summaryByProduct.get(movement.productId)
-      if (!existing || movement.date > existing.lastMovementAt) {
-        summaryByProduct.set(movement.productId, {
-          productId: movement.productId,
-          productName: movement.productName,
-          unit: movement.unit,
-          currentStock: movement.balanceAfter,
-          lastMovementAt: movement.date,
-        })
-      }
-    }
-    return Array.from(summaryByProduct.values()).sort((a, b) =>
-      a.productName.localeCompare(b.productName),
-    )
-  }, [movements])
-
   const filteredProducts = useMemo(() => {
     const keyword = search.trim().toLowerCase()
-    if (!keyword) return productsSummary
-    return productsSummary.filter((product) => product.productName.toLowerCase().includes(keyword))
-  }, [productsSummary, search])
+    if (!keyword) return products
+    return products.filter((product) => product.productName.toLowerCase().includes(keyword))
+  }, [products, search])
 
-  // Nếu lựa chọn hiện tại không còn nằm trong kết quả tìm kiếm (hoặc chưa chọn gì),
-  // tự động dùng sản phẩm đầu tiên — tính ngay lúc render, không đồng bộ qua effect
-  // (tránh render thừa 1 lần, xem react-hooks/set-state-in-effect).
   const effectiveProductId =
     selectedProductId && filteredProducts.some((product) => product.productId === selectedProductId)
       ? selectedProductId
       : (filteredProducts[0]?.productId ?? null)
 
-  const selectedProduct = productsSummary.find(
-    (product) => product.productId === effectiveProductId,
-  )
-  const selectedMovements = useMemo(
-    () =>
-      movements
-        .filter((movement) => movement.productId === effectiveProductId)
-        .sort((a, b) => (a.date < b.date ? 1 : -1)),
-    [movements, effectiveProductId],
-  )
+  const selectedProduct = products.find((product) => product.productId === effectiveProductId)
+  const { data: movements = [], isLoading: movementsLoading } =
+    useProductMovements(effectiveProductId)
 
   return (
     <div className="flex flex-col gap-6 lg:h-full">
@@ -82,7 +55,7 @@ export default function InventoryReportPage() {
         />
       </div>
 
-      {isLoading ? (
+      {productsLoading ? (
         <div className="flex justify-center py-16">
           <Spinner size={28} />
         </div>
@@ -98,14 +71,19 @@ export default function InventoryReportPage() {
             onSelect={setSelectedProductId}
           />
 
-          {selectedProduct && (
-            <MovementTimeline
-              productName={selectedProduct.productName}
-              unit={selectedProduct.unit}
-              currentStock={selectedProduct.currentStock}
-              movements={selectedMovements}
-            />
-          )}
+          {selectedProduct &&
+            (movementsLoading ? (
+              <Card className="flex items-center justify-center p-5 lg:h-full lg:min-h-0">
+                <Spinner size={24} />
+              </Card>
+            ) : (
+              <MovementTimeline
+                productName={selectedProduct.productName}
+                unit={selectedProduct.unit}
+                currentStock={selectedProduct.currentStock}
+                movements={movements}
+              />
+            ))}
         </div>
       )}
     </div>
