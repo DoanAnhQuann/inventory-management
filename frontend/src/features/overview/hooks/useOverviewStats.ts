@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
 import { useGoodsReceipts } from '@/features/goods-receipt/hooks/useGoodsReceipts'
 
@@ -6,14 +6,20 @@ import { getOverviewStats } from '../services/overview.api'
 import type { DateRange } from '../types/overview.types'
 
 export function useOverviewStats(range: DateRange) {
-  const { data: filteredReceipts = [], isLoading: receiptsLoading } = useGoodsReceipts({
-    from: range.from,
-    to: range.to,
-  })
+  const {
+    data: filteredReceipts = [],
+    isLoading: receiptsLoading,
+    isFetching: receiptsFetching,
+  } = useGoodsReceipts({ from: range.from, to: range.to })
 
-  const { data: stats, isLoading: statsLoading } = useQuery({
+  const {
+    data: stats,
+    isLoading: statsLoading,
+    isFetching: statsFetching,
+  } = useQuery({
     queryKey: ['overview-stats', range.from, range.to],
     queryFn: () => getOverviewStats(range),
+    placeholderData: keepPreviousData,
   })
 
   return {
@@ -25,5 +31,6 @@ export function useOverviewStats(range: DateRange) {
     lowStockProducts: stats?.lowStockProducts ?? [],
     filteredReceipts,
     isLoading: statsLoading || receiptsLoading,
+    isRefreshing: statsFetching || receiptsFetching,
   }
 }

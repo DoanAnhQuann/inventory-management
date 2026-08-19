@@ -12,6 +12,7 @@ import { LowStockPanel } from '@/features/overview/components/LowStockPanel'
 import { StatCard } from '@/features/overview/components/StatCard'
 import { TopProductsChart } from '@/features/overview/components/TopProductsChart'
 import { useOverviewStats } from '@/features/overview/hooks/useOverviewStats'
+import { cn } from '@/lib/cn'
 import { formatCurrency } from '@/utils/currency'
 import { formatDate } from '@/utils/date'
 import { type DateRangeValue, getPresetRange } from '@/utils/dateRange'
@@ -71,7 +72,21 @@ export default function HomePage() {
           <Spinner size={28} />
         </div>
       ) : (
-        <>
+        <div
+          className={cn(
+            'relative flex flex-col gap-6 transition-opacity duration-200',
+            stats.isRefreshing && 'pointer-events-none opacity-60',
+          )}
+        >
+          {stats.isRefreshing && (
+            <div className="absolute inset-x-0 top-24 z-10 flex justify-center">
+              <span className="flex items-center gap-2 rounded-full bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-md">
+                <Spinner size={14} />
+                Đang cập nhật số liệu
+              </span>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
               icon={ArrowDownToLine}
@@ -122,7 +137,7 @@ export default function HomePage() {
               onPageChange={setPage}
             />
           </div>
-        </>
+        </div>
       )}
     </div>
   )

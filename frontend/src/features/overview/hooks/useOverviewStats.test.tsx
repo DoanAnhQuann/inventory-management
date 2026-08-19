@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getGoodsReceipts } from '@/features/goods-receipt/services/goods-receipts.api'
 
 import { getOverviewStats } from '../services/overview.api'
+import type { DateRange } from '../types/overview.types'
 import { useOverviewStats } from './useOverviewStats'
 
 vi.mock('@/features/goods-receipt/services/goods-receipts.api')
@@ -80,5 +81,29 @@ describe('useOverviewStats', () => {
 
     await waitFor(() => expect(result.current.receiptCount).toBe(11))
     expect(result.current.isLoading).toBe(true)
+  })
+
+  it('keeps showing the previous numbers while a new date range is loading', async () => {
+    mockedGetOverviewStats.mockResolvedValue(stats)
+    mockedGetGoodsReceipts.mockResolvedValue(receipts)
+    const { wrapper } = renderWithQueryClient()
+
+    const { result, rerender } = renderHook((range: DateRange) => useOverviewStats(range), {
+      wrapper,
+      initialProps: { from: '2026-08-12', to: '2026-08-19' },
+    })
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    expect(result.current.receiptCount).toBe(11)
+
+    mockedGetOverviewStats.mockReturnValue(new Promise(() => {}))
+    mockedGetGoodsReceipts.mockReturnValue(new Promise(() => {}))
+    rerender({ from: '2026-07-01', to: '2026-07-31' })
+
+    await waitFor(() => expect(result.current.isRefreshing).toBe(true))
+    expect(result.current.isLoading).toBe(false)
+    expect(result.current.receiptCount).toBe(11)
+    expect(result.current.totalValue).toBe(27440000)
+    expect(result.current.filteredReceipts).toEqual(receipts)
   })
 })

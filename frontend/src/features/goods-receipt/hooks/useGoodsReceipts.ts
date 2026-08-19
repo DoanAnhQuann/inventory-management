@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 import { PRODUCTS_KEY } from '@/features/products/hooks/useProducts'
@@ -14,6 +14,7 @@ export function useGoodsReceipts(range?: { from?: string; to?: string }) {
   return useQuery({
     queryKey: [...GOODS_RECEIPTS_KEY, range?.from ?? '', range?.to ?? ''],
     queryFn: () => getGoodsReceipts(range),
+    placeholderData: keepPreviousData,
   })
 }
 
