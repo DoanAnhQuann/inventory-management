@@ -57,6 +57,16 @@ function mapZodIssues(error: ZodError) {
   }));
 }
 
+const FOREIGN_KEY_CONSTRAINT_CODE = 'P2003';
+
+function isForeignKeyConstraintError(exception: unknown): boolean {
+  return (
+    typeof exception === 'object' &&
+    exception !== null &&
+    (exception as { code?: unknown }).code === FOREIGN_KEY_CONSTRAINT_CODE
+  );
+}
+
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
@@ -108,6 +118,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
         code: RESPONSE_CODE.VALIDATION_ERROR,
         message: COMMON_MESSAGE.VALIDATION_ERROR,
         errors: zodError instanceof ZodError ? mapZodIssues(zodError) : [],
+      };
+    }
+
+    if (isForeignKeyConstraintError(exception)) {
+      return {
+        status: HttpStatus.CONFLICT,
+        code: RESPONSE_CODE.CONFLICT,
+        message: COMMON_MESSAGE.REFERENCE_CONSTRAINT,
+        errors: [],
       };
     }
 

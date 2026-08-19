@@ -83,7 +83,10 @@ describe('useCreateSupplier', () => {
     result.current.mutate({ name: 'NCC mới' })
 
     await waitFor(() => expect(result.current.isError).toBe(true))
-    expect(toast.error).toHaveBeenCalledWith('Có lỗi xảy ra, vui lòng thử lại sau')
+    expect(toast.error).toHaveBeenCalledWith(
+      'Có lỗi xảy ra, vui lòng thử lại sau',
+      expect.objectContaining({ duration: expect.any(Number) }),
+    )
   })
 })
 

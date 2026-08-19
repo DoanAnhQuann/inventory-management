@@ -6,4 +6,6 @@ export const SUPPLIER_MESSAGE = {
   NAME_DUPLICATE: 'Tên nhà cung cấp đã tồn tại',
   NAME_REQUIRED: 'Vui lòng nhập tên nhà cung cấp',
   ID_INVALID: 'ID nhà cung cấp không hợp lệ',
+  DELETE_IN_USE: (receiptCount: number) =>
+    `Không thể xoá nhà cung cấp này vì đang được sử dụng trong ${receiptCount} phiếu nhập kho. Xoá nhà cung cấp sẽ làm mất thông tin nguồn hàng của các phiếu đã lập.`,
 } as const;

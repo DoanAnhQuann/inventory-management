@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { getApiErrorMessage } from '@/services/api/error-handler'
+import { notifyApiError } from '@/services/api/error-handler'
 
 import type { ProductFormValues } from '../schemas/product.schema'
 import { createProduct, deleteProduct, getProducts, updateProduct } from '../services/products.api'
@@ -20,7 +20,7 @@ export function useCreateProduct() {
       queryClient.invalidateQueries({ queryKey: PRODUCTS_KEY })
       toast.success(message)
     },
-    onError: (error) => toast.error(getApiErrorMessage(error)),
+    onError: notifyApiError,
   })
 }
 
@@ -33,7 +33,7 @@ export function useUpdateProduct() {
       queryClient.invalidateQueries({ queryKey: PRODUCTS_KEY })
       toast.success(message)
     },
-    onError: (error) => toast.error(getApiErrorMessage(error)),
+    onError: notifyApiError,
   })
 }
 
@@ -45,6 +45,6 @@ export function useDeleteProduct() {
       queryClient.invalidateQueries({ queryKey: PRODUCTS_KEY })
       toast.success(message)
     },
-    onError: (error) => toast.error(getApiErrorMessage(error)),
+    onError: notifyApiError,
   })
 }

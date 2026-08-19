@@ -13,4 +13,6 @@ export const PRODUCT_MESSAGE = {
   MIN_STOCK_THRESHOLD_INVALID:
     'Ngưỡng tồn kho tối thiểu phải là số nguyên không âm',
   ID_INVALID: 'ID sản phẩm không hợp lệ',
+  DELETE_IN_USE: (receiptCount: number) =>
+    `Không thể xoá sản phẩm này vì đang được sử dụng trong ${receiptCount} phiếu nhập kho. Xoá sản phẩm sẽ làm sai lệch dữ liệu tồn kho và số liệu thống kê của các phiếu đã lập.`,
 } as const;

@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { PRODUCTS_KEY } from '@/features/products/hooks/useProducts'
 import { SUPPLIERS_KEY } from '@/features/suppliers/hooks/useSuppliers'
 import { WAREHOUSES_KEY } from '@/features/warehouses/hooks/useWarehouses'
-import { getApiErrorMessage } from '@/services/api/error-handler'
+import { notifyApiError } from '@/services/api/error-handler'
 
 import { createGoodsReceipt, getGoodsReceipts } from '../services/goods-receipts.api'
 
@@ -28,6 +28,6 @@ export function useCreateGoodsReceipt() {
       queryClient.invalidateQueries({ queryKey: PRODUCTS_KEY })
       toast.success(message)
     },
-    onError: (error) => toast.error(getApiErrorMessage(error)),
+    onError: notifyApiError,
   })
 }

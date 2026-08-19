@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { getApiErrorMessage } from '@/services/api/error-handler'
+import { notifyApiError } from '@/services/api/error-handler'
 
 import type { WarehouseFormValues } from '../schemas/warehouse.schema'
 import {
@@ -25,7 +25,7 @@ export function useCreateWarehouse() {
       queryClient.invalidateQueries({ queryKey: WAREHOUSES_KEY })
       toast.success(message)
     },
-    onError: (error) => toast.error(getApiErrorMessage(error)),
+    onError: notifyApiError,
   })
 }
 
@@ -38,7 +38,7 @@ export function useUpdateWarehouse() {
       queryClient.invalidateQueries({ queryKey: WAREHOUSES_KEY })
       toast.success(message)
     },
-    onError: (error) => toast.error(getApiErrorMessage(error)),
+    onError: notifyApiError,
   })
 }
 
@@ -50,6 +50,6 @@ export function useDeleteWarehouse() {
       queryClient.invalidateQueries({ queryKey: WAREHOUSES_KEY })
       toast.success(message)
     },
-    onError: (error) => toast.error(getApiErrorMessage(error)),
+    onError: notifyApiError,
   })
 }

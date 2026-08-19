@@ -9,6 +9,8 @@ export const COMMON_MESSAGE = {
   FORBIDDEN: 'Không có quyền truy cập',
   NOT_FOUND: 'Không tìm thấy dữ liệu',
   CONFLICT: 'Dữ liệu đã tồn tại',
+  REFERENCE_CONSTRAINT:
+    'Không thể xoá dữ liệu này vì đang được sử dụng ở nơi khác trong hệ thống',
   INTERNAL_SERVER_ERROR: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
 } as const;
 

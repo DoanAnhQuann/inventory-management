@@ -56,7 +56,19 @@ export class ProductService {
 
   async remove(id: string): Promise<void> {
     await this.findOne(id);
+    await this.assertNotInUse(id);
     await this.productRepo.delete(id);
+  }
+
+  private async assertNotInUse(id: string) {
+    const receiptCount = await this.productRepo.countGoodsReceipts(id);
+    if (receiptCount > 0) {
+      throw new AppException({
+        code: RESPONSE_CODE.CONFLICT,
+        message: PRODUCT_MESSAGE.DELETE_IN_USE(receiptCount),
+        status: HttpStatus.CONFLICT,
+      });
+    }
   }
 
   private async assertNoDuplicate(

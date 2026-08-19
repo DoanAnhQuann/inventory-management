@@ -108,6 +108,21 @@ describe('AllExceptionsFilter', () => {
     });
   });
 
+  it('turns a Prisma foreign-key error (P2003) into a friendly 409 instead of a 500', () => {
+    const { host, response } = buildHost();
+
+    filter.catch({ code: 'P2003' }, host);
+
+    expect(response.status).toHaveBeenCalledWith(HttpStatus.CONFLICT);
+    expect(response.json).toHaveBeenCalledWith({
+      success: false,
+      code: RESPONSE_CODE.CONFLICT,
+      message: COMMON_MESSAGE.REFERENCE_CONSTRAINT,
+      status: HttpStatus.CONFLICT,
+      errors: [],
+    });
+  });
+
   it('falls back to INTERNAL_SERVER_ERROR for unknown thrown values', () => {
     const { host, response } = buildHost();
 

@@ -34,6 +34,7 @@ describe('ProductService', () => {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      countGoodsReceipts: jest.fn().mockResolvedValue(0),
     } as unknown as jest.Mocked<ProductRepo>;
     service = new ProductService(repo);
   });
@@ -197,6 +198,18 @@ describe('ProductService', () => {
 
       await expect(service.remove('missing')).rejects.toMatchObject({
         code: RESPONSE_CODE.NOT_FOUND,
+      });
+      expect(repo.delete).not.toHaveBeenCalled();
+    });
+
+    it('refuses to delete a product used by goods receipts, naming how many', async () => {
+      repo.findById.mockResolvedValue(buildProductRow());
+      repo.countGoodsReceipts.mockResolvedValue(3);
+
+      await expect(service.remove('prod-1')).rejects.toMatchObject({
+        code: RESPONSE_CODE.CONFLICT,
+        message: PRODUCT_MESSAGE.DELETE_IN_USE(3),
+        status: HttpStatus.CONFLICT,
       });
       expect(repo.delete).not.toHaveBeenCalled();
     });

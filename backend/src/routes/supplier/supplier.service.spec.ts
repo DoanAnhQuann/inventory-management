@@ -28,6 +28,7 @@ describe('SupplierService', () => {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      countGoodsReceipts: jest.fn().mockResolvedValue(0),
     } as unknown as jest.Mocked<SupplierRepo>;
     service = new SupplierService(repo);
   });
@@ -140,6 +141,18 @@ describe('SupplierService', () => {
 
       await expect(service.remove('missing')).rejects.toMatchObject({
         code: RESPONSE_CODE.NOT_FOUND,
+      });
+      expect(repo.delete).not.toHaveBeenCalled();
+    });
+
+    it('refuses to delete a supplier used by goods receipts, naming how many', async () => {
+      repo.findById.mockResolvedValue(buildSupplierRow());
+      repo.countGoodsReceipts.mockResolvedValue(2);
+
+      await expect(service.remove('sup-1')).rejects.toMatchObject({
+        code: RESPONSE_CODE.CONFLICT,
+        message: SUPPLIER_MESSAGE.DELETE_IN_USE(2),
+        status: HttpStatus.CONFLICT,
       });
       expect(repo.delete).not.toHaveBeenCalled();
     });

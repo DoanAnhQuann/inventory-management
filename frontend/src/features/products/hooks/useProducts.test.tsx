@@ -86,7 +86,10 @@ describe('useCreateProduct', () => {
     result.current.mutate({ name: 'Giấy A4', code: 'VT-001', unit: 'Ram', price: 78500 })
 
     await waitFor(() => expect(result.current.isError).toBe(true))
-    expect(toast.error).toHaveBeenCalledWith('Có lỗi xảy ra, vui lòng thử lại sau')
+    expect(toast.error).toHaveBeenCalledWith(
+      'Có lỗi xảy ra, vui lòng thử lại sau',
+      expect.objectContaining({ duration: expect.any(Number) }),
+    )
   })
 })
 

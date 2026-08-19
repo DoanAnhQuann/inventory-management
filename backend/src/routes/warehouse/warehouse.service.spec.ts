@@ -32,6 +32,7 @@ describe('WarehouseService', () => {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      countGoodsReceipts: jest.fn().mockResolvedValue(0),
     } as unknown as jest.Mocked<WarehouseRepo>;
     service = new WarehouseService(repo);
   });
@@ -154,6 +155,18 @@ describe('WarehouseService', () => {
 
       await expect(service.remove('missing')).rejects.toMatchObject({
         code: RESPONSE_CODE.NOT_FOUND,
+      });
+      expect(repo.delete).not.toHaveBeenCalled();
+    });
+
+    it('refuses to delete a warehouse used by goods receipts, naming how many', async () => {
+      repo.findById.mockResolvedValue(buildWarehouseRow());
+      repo.countGoodsReceipts.mockResolvedValue(5);
+
+      await expect(service.remove('wh-1')).rejects.toMatchObject({
+        code: RESPONSE_CODE.CONFLICT,
+        message: WAREHOUSE_MESSAGE.DELETE_IN_USE(5),
+        status: HttpStatus.CONFLICT,
       });
       expect(repo.delete).not.toHaveBeenCalled();
     });

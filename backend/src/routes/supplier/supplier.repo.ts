@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import type { PrismaClientOrTx } from '../../shared/prisma/prisma.types';
 import { PrismaService } from '../../shared/prisma/prisma.service';
+import { countGoodsReceiptsBySupplier } from '../../shared/usage/entity-usage.repo';
 import { CreateSupplierDto, UpdateSupplierDto } from './supplier.dto';
 
 @Injectable()
@@ -35,5 +36,9 @@ export class SupplierRepo {
 
   delete(id: string, tx: PrismaClientOrTx = this.prisma) {
     return tx.supplier.delete({ where: { id } });
+  }
+
+  countGoodsReceipts(id: string, tx: PrismaClientOrTx = this.prisma) {
+    return countGoodsReceiptsBySupplier(id, tx);
   }
 }

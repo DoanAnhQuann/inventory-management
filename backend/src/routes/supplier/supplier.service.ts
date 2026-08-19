@@ -52,7 +52,19 @@ export class SupplierService {
 
   async remove(id: string): Promise<void> {
     await this.findOne(id);
+    await this.assertNotInUse(id);
     await this.supplierRepo.delete(id);
+  }
+
+  private async assertNotInUse(id: string) {
+    const receiptCount = await this.supplierRepo.countGoodsReceipts(id);
+    if (receiptCount > 0) {
+      throw new AppException({
+        code: RESPONSE_CODE.CONFLICT,
+        message: SUPPLIER_MESSAGE.DELETE_IN_USE(receiptCount),
+        status: HttpStatus.CONFLICT,
+      });
+    }
   }
 
   private async assertNoDuplicate(name: string, excludeId?: string) {

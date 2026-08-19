@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { getApiErrorMessage } from '@/services/api/error-handler'
+import { notifyApiError } from '@/services/api/error-handler'
 
 import type { SupplierFormValues } from '../schemas/supplier.schema'
 import {
@@ -25,7 +25,7 @@ export function useCreateSupplier() {
       queryClient.invalidateQueries({ queryKey: SUPPLIERS_KEY })
       toast.success(message)
     },
-    onError: (error) => toast.error(getApiErrorMessage(error)),
+    onError: notifyApiError,
   })
 }
 
@@ -38,7 +38,7 @@ export function useUpdateSupplier() {
       queryClient.invalidateQueries({ queryKey: SUPPLIERS_KEY })
       toast.success(message)
     },
-    onError: (error) => toast.error(getApiErrorMessage(error)),
+    onError: notifyApiError,
   })
 }
 
@@ -50,6 +50,6 @@ export function useDeleteSupplier() {
       queryClient.invalidateQueries({ queryKey: SUPPLIERS_KEY })
       toast.success(message)
     },
-    onError: (error) => toast.error(getApiErrorMessage(error)),
+    onError: notifyApiError,
   })
 }

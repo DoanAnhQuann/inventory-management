@@ -54,7 +54,19 @@ export class WarehouseService {
 
   async remove(id: string): Promise<void> {
     await this.findOne(id);
+    await this.assertNotInUse(id);
     await this.warehouseRepo.delete(id);
+  }
+
+  private async assertNotInUse(id: string) {
+    const receiptCount = await this.warehouseRepo.countGoodsReceipts(id);
+    if (receiptCount > 0) {
+      throw new AppException({
+        code: RESPONSE_CODE.CONFLICT,
+        message: WAREHOUSE_MESSAGE.DELETE_IN_USE(receiptCount),
+        status: HttpStatus.CONFLICT,
+      });
+    }
   }
 
   private async assertNoDuplicate(name: string, excludeId?: string) {
