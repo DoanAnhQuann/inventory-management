@@ -1,0 +1,8 @@
+export interface Warehouse {
+  id: string
+  name: string
+  location: string
+  createdAt: string
+  updatedAt: string
+  inboundAt: string
+}
