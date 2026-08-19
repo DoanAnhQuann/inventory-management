@@ -20,6 +20,23 @@ Toàn bộ dữ liệu (sản phẩm, kho, nhà cung cấp, số lượng tồn)
 với nhau — ví dụ khi tạo 1 phiếu nhập kho, số liệu ở trang Tổng quan và Lịch sử biến động tồn kho
 sẽ tự động phản ánh ngay, không cần thao tác thêm.
 
+## Dữ liệu demo có sẵn
+
+Hệ thống **đã được nạp sẵn dữ liệu** mô phỏng một tuần vận hành thật của kho (12/08 – 19/08/2026),
+nên có thể vào xem ngay mọi màn hình với số liệu thật, không cần tự nhập liệu từ đầu:
+
+| Hạng mục       | Số lượng                            |
+| -------------- | ----------------------------------- |
+| Kho hàng       | 3 (Hà Nội, TP.HCM, Đà Nẵng)         |
+| Nhà cung cấp   | 5                                   |
+| Mặt hàng       | 14 (văn phòng phẩm, thiết bị)       |
+| Phiếu nhập kho | 15 phiếu, rải đều đủ 8 ngày         |
+| Tổng giá trị   | ~104 triệu đồng / 2.008 đơn vị hàng |
+
+Dữ liệu được thiết kế giống một kho đang hoạt động thật: mặt hàng tiêu hao (giấy, bút) nhập số
+lượng lớn và nhiều lần, mặt hàng giá trị cao (mực in, thiết bị) nhập ít hơn nên tồn kho thấp — nhờ
+vậy các biểu đồ, cảnh báo sắp hết hàng và lịch sử biến động tồn kho đều hiển thị đúng như thực tế.
+
 ## Cấu trúc dự án
 
 Dự án gồm 2 phần độc lập, nằm trong cùng 1 thư mục:
