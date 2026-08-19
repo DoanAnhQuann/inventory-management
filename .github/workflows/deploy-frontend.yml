@@ -8,7 +8,7 @@ on:
       - ".github/workflows/deploy-frontend.yml"
 
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/inventory-frontend
+  IMAGE_NAME: ghcr.io/doananhquann/inventory-frontend
 
 jobs:
   build-and-deploy:
