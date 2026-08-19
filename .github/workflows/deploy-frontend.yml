@@ -37,7 +37,7 @@ jobs:
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
           build-args: |
-            VITE_API_BASE_URL=https://lotuscoinvn.online/api
+            VITE_API_BASE_URL=https://inventory.lotuscoinvn.online/api
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3

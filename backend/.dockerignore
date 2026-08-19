@@ -1,0 +1,13 @@
+node_modules
+generated
+dist
+coverage
+.git
+.env
+.env.example
+.husky
+.agents
+.claude
+.windsurf
+*.md
+test
