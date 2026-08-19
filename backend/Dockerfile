@@ -4,6 +4,7 @@ COPY package*.json ./
 COPY prisma.config.ts ./
 COPY prisma ./prisma
 RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" npm install
+RUN find generated -name "*.ts" -exec sed -i -e 's/\.ts"/.js"/g' -e "s/\.ts'/.js'/g" {} +
 COPY . .
 RUN npm run build
 
